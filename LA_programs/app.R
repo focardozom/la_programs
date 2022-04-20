@@ -2,14 +2,22 @@
 library(shiny)
 library(shinydashboard)
 library(leaflet)
+library(reactable)
+library(readxl)
 
 ui <- dashboardPage(
   dashboardHeader(title = "Data registry"),
   dashboardSidebar(
     sidebarMenu(
       menuItem("Prevention programs", tabName = "programs"),
-      menuItem("Data set", tabName = "data_set"),
-      menuItem("Literature review", tabName = "lit")
+      menuItem("Data set", 
+               tabName = "data_set"),
+      menuItem("Literature review", 
+               tabName = "lit",
+               selectInput("Country", "Country:",
+                           c("Col" = "col",
+                             "Pr" = "per",
+                             "ecu" = "ecu")))
     )
   ),
   dashboardBody(
@@ -18,11 +26,11 @@ ui <- dashboardPage(
                 leafletOutput("mymap")
               ),
       tabItem("data_set",
-              verbatimTextOutput("Data set of programs"),
-              downloadButton("downloadCsv", "Download as dataset?")
-      ),
+              reactableOutput("table")
+              ),
       tabItem("lit", 
-              verbatimTextOutput("Literature Review here"))
+              "text"
+              )
     )
   )
 )
@@ -30,7 +38,9 @@ ui <- dashboardPage(
 
 
 server <- function(input, output) {
-
+  
+  dataset <- read_xlsx("CICADProject_Dataset_clean.xlsx", sheet = 2)
+  
   output$mymap <- renderLeaflet({
     leaflet() %>%
       addProviderTiles(providers$Stamen.TonerLite,
@@ -38,7 +48,9 @@ server <- function(input, output) {
       )
   })
     
-  
+  output$table <- renderReactable({
+    reactable(dataset, groupBy = "Country (simplified)")
+  })
 }
 
 shinyApp(ui = ui, server = server)
