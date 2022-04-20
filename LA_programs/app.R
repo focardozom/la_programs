@@ -1,33 +1,44 @@
 
 library(shiny)
+library(shinydashboard)
+library(leaflet)
 
-ui <- fluidPage(
-
-    titlePanel("Old Faithful Geyser Data"),
-
-    sidebarLayout(
-        sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
-        ),
-
-        mainPanel(
-           plotOutput("distPlot")
-        )
+ui <- dashboardPage(
+  dashboardHeader(title = "Data registry"),
+  dashboardSidebar(
+    sidebarMenu(
+      menuItem("Prevention programs", tabName = "programs"),
+      menuItem("Data set", tabName = "data_set"),
+      menuItem("Literature review", tabName = "lit")
     )
+  ),
+  dashboardBody(
+    tabItems(
+      tabItem("programs",
+                leafletOutput("mymap")
+              ),
+      tabItem("data_set",
+              verbatimTextOutput("Data set of programs"),
+              downloadButton("downloadCsv", "Download as dataset?")
+      ),
+      tabItem("lit", 
+              verbatimTextOutput("Literature Review here"))
+    )
+  )
 )
+
+
 
 server <- function(input, output) {
 
-    output$distPlot <- renderPlot({
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        hist(x, breaks = bins, col = 'darkgray', border = 'white')
-    })
+  output$mymap <- renderLeaflet({
+    leaflet() %>%
+      addProviderTiles(providers$Stamen.TonerLite,
+                       options = providerTileOptions(noWrap = TRUE)
+      )
+  })
+    
+  
 }
 
 shinyApp(ui = ui, server = server)
