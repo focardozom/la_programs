@@ -9,26 +9,18 @@ ui <- dashboardPage(
   dashboardHeader(title = "Data registry"),
   dashboardSidebar(
     sidebarMenu(
-      menuItem("Prevention programs", tabName = "programs"),
-      menuItem("Data set", 
-               tabName = "data_set"),
-      menuItem("Literature review", 
-               tabName = "lit",
-               selectInput("Country", "Country:",
-                           c("Col" = "col",
-                             "Pr" = "per",
-                             "ecu" = "ecu")))
+      menuItem("Overview", tabName = "overview"),
+      menuItem("Countries", tabName = "countries"),
+      menuItem("Database", tabName = "databse"),
+      menuItem("Literature review", tabName = "literature")
     )
   ),
   dashboardBody(
     tabItems(
-      tabItem("programs",
-                leafletOutput("mymap")
-              ),
-      tabItem("data_set",
-              reactableOutput("table")
-              ),
-      tabItem("lit", 
+      tabItem("overview"),
+      tabItem("countries",leafletOutput("mymap")),
+      tabItem("databse",reactableOutput("table")),
+      tabItem("literature", 
               "text"
               )
     )
