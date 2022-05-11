@@ -29,7 +29,14 @@ ui <- dashboardPage(
               sliderInput("Filtros", "Slider input:", 1, 100, 50),
               reactableOutput("table")),
       tabItem("literature", 
-              "text"
+              h1("text"),
+              p("teeeexxtt"),
+              box(
+                title = "Número de artículos",
+                status = "primary", 
+                solidHeader = TRUE,
+                plotOutput("lit_plot_n", height = 250, 
+                           width = 250))
               )
     )
   )
@@ -91,6 +98,26 @@ server <- function(input, output) {
       bordered = TRUE,
       highlight = TRUE
     )
+  })
+  
+
+# Literature review -------------------------------------------------------
+
+  lit <-read_xlsx("CICADProject_Dataset_clean.xlsx", sheet = 9) 
+  
+  output$lit_plot_n <- renderPlot({
+    lit |> count(Year) |> 
+    ggplot(aes(Year, n)) + 
+    geom_bar(stat = "identity") +
+    scale_y_continuous(breaks = seq(1,20,1), limits = c(0,12)) +
+    scale_x_continuous(breaks = seq(1980,2020,2), limits = c(1982,2021)) +
+    geom_text(aes(label=n), vjust=-0.1) +
+    theme_classic() +
+    theme(axis.text.x = element_text(angle=90)) +
+    theme(axis.text.y = element_blank()) +
+    labs(x="Año de publicación",
+         y="Número de artículos",
+         title = "")
   })
 }
 

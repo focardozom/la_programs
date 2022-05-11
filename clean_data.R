@@ -16,3 +16,17 @@ dataset <- read_xlsx("CICADProject_Dataset_clean.xlsx", sheet = 2) |>
   mutate(Descipcion=str_to_sentence(Descripcion))
 
 dataset$country_simplified
+
+lit <-read_xlsx("CICADProject_Dataset_clean.xlsx", sheet = 9) 
+
+lit |> count(Year) |> 
+ggplot( aes(Year, n)) + 
+  geom_bar(stat = "identity") +
+  scale_y_continuous(breaks = seq(1,20,1), limits = c(0,12)) +
+  scale_x_continuous(breaks = seq(1980,2020,2), limits = c(1982,2021)) +
+  geom_text(aes(label=n), vjust=-0.1) +
+  theme_void() +
+  theme(axis.text.x = element_text(angle=90)) +
+  labs(x="Año de publicación",
+       title = "Número de articulos")
+  
