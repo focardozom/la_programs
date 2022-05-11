@@ -6,7 +6,7 @@ library(shinydashboard)
 library(leaflet)
 library(reactable)
 library(readxl)
-library(glue)
+library(crosstalk)
 
 ui <- dashboardPage(
   dashboardHeader(title = "Data registry"),
@@ -26,7 +26,12 @@ ui <- dashboardPage(
       ),
       tabItem("countries",leafletOutput("mymap")),
       tabItem("databse",
-              sliderInput("Filtros", "Slider input:", 1, 100, 50),
+              selectizeInput("country", "Pais", 
+                             c("Multi","Chile","Brazil","Colombia","Peru",
+                               "Mexico","El Salvador","Bahamas","Costa Rica","Jamaica",
+                               "Ecuador","Panama","Argentina"), 
+                             selected = NULL, multiple = TRUE,
+                             options = NULL),
               reactableOutput("table")),
       tabItem("literature", 
               "text"
@@ -37,7 +42,12 @@ ui <- dashboardPage(
 
 
 
-server <- function(input, output) {
+
+server <- function(session, input, output) {
+
+
+# Import data set ---------------------------------------------------------
+
   
   dataset <- read_xlsx("CICADProject_Dataset_clean.xlsx", sheet = 2) |> 
     clean_names() |> select(interview_number,
@@ -50,6 +60,58 @@ server <- function(input, output) {
     rename(Descripcion= please_provide_a_brief_description_of_the_intervention) |> 
     mutate(Programa=str_to_title(Programa)) |> 
     mutate(Descripcion=str_to_sentence(Descripcion))
+  
+
+# Filter dataset ----------------------------------------------------------
+  
+  the_data <- reactive({
+    
+    the_data <-
+      if(is.null(input$country)){
+      dataset}
+    else{  
+        dataset |> 
+        filter(Pais %in% c(input$country[1],
+                           input$country[2],
+                           input$country[3],
+                           input$country[4],
+                           input$country[5],
+                           input$country[6],
+                           input$country[7],
+                           input$country[8],
+                           input$country[9],
+                           input$country[10],
+                           input$country[11],
+                           input$country[12]))
+        }
+    
+    })
+  
+
+# Reactable ---------------------------------------------------------------
+
+  output$table <- renderReactable({
+    reactable(
+      the_data(),
+      defaultColDef = colDef(
+        header = function(value) gsub(".", " ", value, fixed = TRUE),
+        cell = function(value) format(value, nsmall = 1),
+        minWidth = 70,
+        headerStyle = list(background = "#f7f7f8")
+      ),
+      columns = list(
+        Descripcion = colDef(minWidth = 200),
+        ID = colDef(minWidth = 20),
+        Country = colDef(minWidth = 30) 
+      ),
+      bordered = TRUE,
+      highlight = TRUE
+    )
+  })  
+  
+# Map labels --------------------------------------------------------------
+
+
   
   col <- paste(sep = "<br/>",
                    "<b>Colombia</b>",
@@ -74,24 +136,7 @@ server <- function(input, output) {
       
   })
     
-  output$table <- renderReactable({
-    reactable(
-      dataset,
-      defaultColDef = colDef(
-        header = function(value) gsub(".", " ", value, fixed = TRUE),
-        cell = function(value) format(value, nsmall = 1),
-        minWidth = 70,
-        headerStyle = list(background = "#f7f7f8")
-      ),
-      columns = list(
-        Descripcion = colDef(minWidth = 200),
-        ID = colDef(minWidth = 20),
-        Country = colDef(minWidth = 30) 
-      ),
-      bordered = TRUE,
-      highlight = TRUE
-    )
-  })
+  
 }
 
 shinyApp(ui = ui, server = server)
