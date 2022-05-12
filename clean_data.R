@@ -29,4 +29,14 @@ ggplot( aes(Year, n)) +
   theme(axis.text.x = element_text(angle=90)) +
   labs(x="Año de publicación",
        title = "Número de articulos")
+
+lit |> select(`Implementation country`) |> 
+  mutate(`Implementation country`=str_to_title(str_trim(`Implementation country`))) |> 
+  separate_rows(`Implementation country`, sep = ",") |> 
+  count(`Implementation country`) |> 
+  filter(!is.na(`Implementation country`)) |> 
+  ggplot(aes(reorder(`Implementation country`,n), n)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  labs(x="", y="Número de artículos")
   
