@@ -15,6 +15,21 @@ read_xlsx("CICADProject_Dataset_clean.xlsx", sheet = 2) |>
                            what_type_of_intervention_is_it_choice_other_please_specify) |> 
   pivot_longer(-country_simplified) |> 
   mutate(name=str_remove_all(name, "what_type_of_intervention_is_it_choice_")) |> 
+  mutate(value=ifelse(value=="Checked", 1, 0)) |> 
+  group_by(country_simplified, name) |> 
+  summarise(total=sum(value)) |> 
+  pivot_wider(names_from = name, 
+              values_from = total, 
+              id_cols = country_simplified) |> 
+  rename(Pais=country_simplified, 
+         Otro=other_please_specify, 
+         Programa= program,
+         `Estrategia`= strategy_practice,
+         Sistema=system,
+         Entrenamiento=training) |> 
+  select(Pais, Sistema, Programa, Estrategia, Entrenamiento, Otro) |> 
+  reactable()
+
   
   
 

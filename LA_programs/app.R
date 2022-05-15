@@ -21,7 +21,8 @@ ui <- dashboardPage(
   dashboardBody(
     tabItems(
       tabItem("overview", includeMarkdown("text/text_tab1.md")),
-      tabItem("countries",leafletOutput("mymap")),
+      tabItem("countries",leafletOutput("mymap"), 
+              reactableOutput("the_programs")),
       tabItem("databse",
               selectizeInput("country", "Pais", 
                              c("Multi","Chile","Brazil","Colombia","Peru",
@@ -129,7 +130,9 @@ server <- function(session, input, output) {
       
   })
     
-  
+  output$the_programs <- renderReactable({
+    reactable(table_programs)
+  })
 
 # Literature review -------------------------------------------------------
 
