@@ -3,6 +3,21 @@
 library(janitor)
 library(tidyverse)
 library(stringr)
+
+
+the_data
+read_xlsx("CICADProject_Dataset_clean.xlsx", sheet = 2) |> 
+  clean_names() |>  select(country_simplified,
+                           what_type_of_intervention_is_it_choice_program,
+                           what_type_of_intervention_is_it_choice_strategy_practice,
+                           what_type_of_intervention_is_it_choice_training,
+                           what_type_of_intervention_is_it_choice_system,
+                           what_type_of_intervention_is_it_choice_other_please_specify) |> 
+  pivot_longer(-country_simplified) |> 
+  mutate(name=str_remove_all(name, "what_type_of_intervention_is_it_choice_")) |> 
+  
+  
+
 dataset <- read_xlsx("CICADProject_Dataset_clean.xlsx", sheet = 2) |> 
   clean_names() |> select(interview_number,
                   country_simplified,
@@ -15,7 +30,7 @@ dataset <- read_xlsx("CICADProject_Dataset_clean.xlsx", sheet = 2) |>
   mutate(Programa=str_to_title(Programa)) |> 
   mutate(Descipcion=str_to_sentence(Descripcion))
 
-dataset$country_simplified
+
 
 lit <-read_xlsx("CICADProject_Dataset_clean.xlsx", sheet = 9) 
 
