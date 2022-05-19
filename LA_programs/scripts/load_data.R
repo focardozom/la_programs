@@ -47,10 +47,20 @@ table_programs <- the_data |>
          Entrenamiento=training) |> 
   select(Pais, Sistema, Programa, Estrategia, Entrenamiento, Otro)
 
+
+to_pop_up("Colombia", "Estrategia")
+
+
+ 
+
+
 col <- paste(sep = "<br/>",
-             "<b>Colombia</b>",
-             "Programas:3",
-             "Articulos:2")
+             "<b>Country</b> : Colombia",
+             "<b>Intervention</b>:",
+             "<b>Type</b>:",
+             "<b>Setting</b>:",
+             "<b>Risk Factors</b>:",
+             "<b>Protective Factors</b>:")
 
 
 
