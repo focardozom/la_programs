@@ -7,9 +7,11 @@ library(leaflet)
 library(reactable)
 library(readxl)
 library(crosstalk)
+source("scripts/load_data.R")
+source("scripts/labels.R")
 
 ui <- dashboardPage(
-  dashboardHeader(title = "Data registry"),
+  dashboardHeader(title = tags$a(tags$img(src = "www/logo.png", align = "left"))),
   dashboardSidebar(
     sidebarMenu(
       menuItem("Overview", tabName = "overview"),
@@ -19,11 +21,14 @@ ui <- dashboardPage(
     )
   ),
   dashboardBody(
+    tags$style(type = "text/css", "#mymap {height: calc(100vh - 80px) !important;}"),
     tabItems(
+      
       tabItem("overview", includeMarkdown("text/text_tab1.md")),
-      tabItem("countries",leafletOutput("mymap"), 
-              reactableOutput("the_programs")),
+      tabItem("countries",
+              leafletOutput("mymap")),
       tabItem("databse",
+              reactableOutput("the_programs"),
               selectizeInput("country", "Pais", 
                              c("Multi","Chile","Brazil","Colombia","Peru",
                                "Mexico","El Salvador","Bahamas","Costa Rica","Jamaica",
@@ -50,17 +55,16 @@ ui <- dashboardPage(
   )
 )
 
+# Import data set ---------------------------------------------------------
 
 
+
+# Functions ---------------------------------------------------------------
+
+source("scripts/Functions.R")
 
 server <- function(session, input, output) {
 
-
-# Import data set ---------------------------------------------------------
-
-  
-  source("scripts/load_data.R")
-  
 
 # Filter dataset ----------------------------------------------------------
   
@@ -113,20 +117,26 @@ server <- function(session, input, output) {
 
 
   output$mymap <- renderLeaflet({
+    
+    
     leaflet() |> 
+      
       addTiles() |> 
-      addMarkers(lng=-74.063644, lat=4.624335, 
-      popup=col) |> 
-      addMarkers(lng=-99.1269, lat=19.4978, popup="México") |> 
-      addMarkers(lng=-64.0000000, lat=-34, popup="Argentina") |> 
-      addMarkers(lng=-47.9297200, lat=-15.7797200, popup="Brazil") |> 
-      addMarkers(lng=-71.5429688, lat=-35.675148, popup="Chile") |> 
+      addMarkers(lng=-74.063644, lat=4.624335, popup=col_1) |> 
+      addMarkers(lng=-75.063644, lat=4.624335, popup=col_2) |> 
+      addMarkers(lng=-73.063644, lat=4.624335, popup=col_3) |> 
+      addMarkers(lng=-76.063644, lat=4.624335, popup=col_4) |> 
+      addMarkers(lng=-99.1269, lat=19.4978, popup=mex) |> 
+      addMarkers(lng=-64.0000000, lat=-34, popup=arg) |> 
+      addMarkers(lng=-47.9297200, lat=-15.7797200, popup=brz) |> 
+      addMarkers(lng=-71.5429688, lat=-35.675148, popup=chl) |> 
       addMarkers(lng=-77.0282400, lat=-12.0431800 , popup="Peru") |> 
       addMarkers(lng=-88.89653, lat=13.794185, popup="El Salvador") |> 
       addMarkers(lng=-77.39628, lat=25.03428, popup="Bahamas") |> 
       addMarkers(lng=-77.297508, lat=18.109581, popup="Jamaica") |> 
       addMarkers(lng=-77.5000000, lat=-2.0000000, popup="Ecuador") |> 
       addMarkers(lng=-80.782127, lat=8.537981, popup="Panama")
+      
       
   })
     

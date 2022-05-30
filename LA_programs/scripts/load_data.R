@@ -22,8 +22,6 @@ dataset <- the_data |>
 
 # Map labels --------------------------------------------------------------
 
-
-
 table_programs <- the_data |> 
   clean_names() |>  select(country_simplified,
                            what_type_of_intervention_is_it_choice_program,
@@ -47,21 +45,7 @@ table_programs <- the_data |>
          Entrenamiento=training) |> 
   select(Pais, Sistema, Programa, Estrategia, Entrenamiento, Otro)
 
-
-to_pop_up("Colombia", "Estrategia")
-
-
  
-
-
-col <- paste(sep = "<br/>",
-             "<b>Country</b> : Colombia",
-             "<b>Intervention</b>:",
-             "<b>Type</b>:",
-             "<b>Setting</b>:",
-             "<b>Risk Factors</b>:",
-             "<b>Protective Factors</b>:")
-
 
 
 # Load data literature review ---------------------------------------------
