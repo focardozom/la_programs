@@ -1,10 +1,13 @@
 # Date: May 16 2020. 
 # Author: Francisco Cardozo. 
 
-
 # Load data programs and interviews ---------------------------------------
 
-the_data <- read_xlsx("CICADProject_Dataset_clean.xlsx", sheet = 2) 
+the_data <- 
+  read_xlsx("CICADProject_Dataset_clean.xlsx", sheet = 2) |> 
+  clean_names() %>% 
+  filter(!is.na(as.numeric(interview_number))) 
+  
 
 dataset <- the_data |> 
   clean_names() |> select(interview_number,
@@ -50,4 +53,6 @@ table_programs <- the_data |>
 
 # Load data literature review ---------------------------------------------
 
-lit <-read_xlsx("CICADProject_Dataset_clean.xlsx", sheet = 9) 
+lit <-read_xlsx("CICADProject_Dataset_clean.xlsx", sheet = 9) |> 
+  filter(!is.na(Year))
+
