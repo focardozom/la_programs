@@ -19,4 +19,6 @@ pop <- function(x){paste(sep = "<br/>",
                          "<b>Country</b> :", list_programs[[x]][2,1],
                          "<b>Intervention</b>:",list_programs[[x]][2,2],
                          "<b>Type</b>:",list_programs[[x]][4,4],
-                         "<b>Target pop:</b>:",list_programs[[x]][4,3])}
+                         "<b>Target pop:</b>:",list_programs[[x]][3,4],
+                         "<b>Risk Factors:</b>:",list_programs[[x]][2,4])}
+list_programs[[1]][4,4]

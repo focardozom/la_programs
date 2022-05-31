@@ -7,28 +7,31 @@ library(leaflet)
 library(reactable)
 library(readxl)
 library(crosstalk)
+
+source("scripts/Functions.R")
 source("scripts/load_data.R")
 source("scripts/labels.R")
 
 ui <- dashboardPage(
-  dashboardHeader(title = tags$a(tags$img(src = "www/logo.png", align = "left"))),
+  dashboardHeader(title = "Data Registry"),
   dashboardSidebar(
     sidebarMenu(
       menuItem("Overview", tabName = "overview"),
       menuItem("Countries", tabName = "countries"),
       menuItem("Database", tabName = "databse"),
-      menuItem("Literature review", tabName = "literature")
+      menuItem("Literature review", tabName = "literature"),
+      menuItem("Contact", tabName = "contact")
     )
   ),
   dashboardBody(
     tags$style(type = "text/css", "#mymap {height: calc(100vh - 80px) !important;}"),
     tabItems(
       
-      tabItem("overview", includeMarkdown("text/text_tab1.md")),
+      tabItem("overview", 
+              includeMarkdown("text/text_tab1.md")),
       tabItem("countries",
               leafletOutput("mymap")),
       tabItem("databse",
-              reactableOutput("the_programs"),
               selectizeInput("country", "Pais", 
                              c("Multi","Chile","Brazil","Colombia","Peru",
                                "Mexico","El Salvador","Bahamas","Costa Rica","Jamaica",
@@ -49,8 +52,13 @@ ui <- dashboardPage(
                     solidHeader = TRUE,
                     plotOutput("lit_plot_countries", height = 250))
                 ),
+              reactableOutput("the_programs"),
+              h1("Literature summary"),
               reactableOutput("lit_table")
-              )
+              ),
+      tabItem("contact", 
+              p("Contact:"),
+              p("perla@miami.edu"))
     )
   )
 )
@@ -61,7 +69,7 @@ ui <- dashboardPage(
 
 # Functions ---------------------------------------------------------------
 
-source("scripts/Functions.R")
+
 
 server <- function(session, input, output) {
 
@@ -122,20 +130,80 @@ server <- function(session, input, output) {
     leaflet() |> 
       
       addTiles() |> 
+
+
+# Arg ---------------------------------------------------------------------
+
+    addMarkers(lng=-64.0000000, lat=-34, popup=arg) |> 
+      
+# Bahamas -----------------------------------------------------------------
+
+    addMarkers(lng=-77.39628, lat=25.03428, popup=bah_1) |> 
+      
+
+# Brz ---------------------------------------------------------------------
+
+    addMarkers(lng=-47.9297200, lat=-15.7797200, popup=brz_1) |> 
+    addMarkers(lng=-48.9297200, lat=-15.7797200, popup=brz_2) |> 
+    addMarkers(lng=-49.9297200, lat=-15.7797200, popup=brz_3) |> 
+    addMarkers(lng=-50.9297200, lat=-15.7797200, popup=brz_4) |> 
+    addMarkers(lng=-51.9297200, lat=-15.7797200, popup=brz_5) |> 
+    addMarkers(lng=-52.9297200, lat=-15.7797200, popup=brz_6) |> 
+      
+      
+
+# Chl ---------------------------------------------------------------------
+
+    addMarkers(lng=-71.5429688, lat=-35.675148, popup=chl_1) |> 
+    addMarkers(lng=-71.5429688, lat=-35.775148, popup=chl_2) |> 
+    addMarkers(lng=-71.5429688, lat=-35.875148, popup=chl_3) |> 
+      
+      
+
+# col ---------------------------------------------------------------------
+
       addMarkers(lng=-74.063644, lat=4.624335, popup=col_1) |> 
-      addMarkers(lng=-75.063644, lat=4.624335, popup=col_2) |> 
-      addMarkers(lng=-73.063644, lat=4.624335, popup=col_3) |> 
+      addMarkers(lng=-75.590553, lat=6.230833, popup=col_2) |> 
+      addMarkers(lng=-76.638565, lat=3.359889, popup=col_3) |> 
       addMarkers(lng=-76.063644, lat=4.624335, popup=col_4) |> 
-      addMarkers(lng=-99.1269, lat=19.4978, popup=mex) |> 
-      addMarkers(lng=-64.0000000, lat=-34, popup=arg) |> 
-      addMarkers(lng=-47.9297200, lat=-15.7797200, popup=brz) |> 
-      addMarkers(lng=-71.5429688, lat=-35.675148, popup=chl) |> 
-      addMarkers(lng=-77.0282400, lat=-12.0431800 , popup="Peru") |> 
-      addMarkers(lng=-88.89653, lat=13.794185, popup="El Salvador") |> 
-      addMarkers(lng=-77.39628, lat=25.03428, popup="Bahamas") |> 
-      addMarkers(lng=-77.297508, lat=18.109581, popup="Jamaica") |> 
-      addMarkers(lng=-77.5000000, lat=-2.0000000, popup="Ecuador") |> 
-      addMarkers(lng=-80.782127, lat=8.537981, popup="Panama")
+      addMarkers(lng=-74.19904, lat=11.24079, popup=col_5) |> 
+      addMarkers(lng=-76.063644, lat=6.624335, popup=col_6) |> 
+      addMarkers(lng=-75.675690, lat=4.535000, popup=col_7) |> 
+      addMarkers(lng=-75.675690, lat=4.535000, popup=col_8) |> 
+      addMarkers(lng=-74.796387, lat=10.963889, popup=col_9) |> 
+      
+
+# Costa Rica --------------------------------------------------------------
+
+    addMarkers(lng=-84.087502, lat=9.934739, popup=cos_1) |> 
+      
+# Ecuador -----------------------------------------------------------------
+
+    addMarkers(lng=-77.5000000, lat=-2.0000000, popup="Ecuador") |> 
+      
+# El Salvador -------------------------------------------------------------
+
+    addMarkers(lng=-88.89653, lat=13.794185, popup="El Salvador") |> 
+      
+# Jamaica -----------------------------------------------------------------
+
+    addMarkers(lng=-77.297508, lat=18.109581, popup="Jamaica") |> 
+      
+
+# Mexico ------------------------------------------------------------------
+
+    addMarkers(lng=-99.1269, lat=19.4978, popup=mex) |> 
+      
+
+# Panama ------------------------------------------------------------------
+
+    addMarkers(lng=-80.782127, lat=8.537981, popup="Panama") |>  
+    
+
+# Peru --------------------------------------------------------------------
+
+
+      addMarkers(lng=-77.0282400, lat=-12.0431800 , popup="Peru")
       
       
   })
@@ -182,7 +250,7 @@ server <- function(session, input, output) {
     columns = list(
       `Intervention description` = colDef(minWidth = 500),
       `Intervention outputs`= colDef(minWidth = 400),
-      Year = colDef(minWidth = 50),
+        Year = colDef(minWidth = 60),
       Title = colDef(minWidth = 100),
       Developers = colDef(minWidth = 200),
     `If used, references:`= colDef(minWidth = 300),
