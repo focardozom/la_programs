@@ -1,0 +1,30 @@
+[
+  {
+    "objectID": "rename.html",
+    "href": "rename.html",
+    "title": "Shinylive applications embedded in Quarto documents",
+    "section": "",
+    "text": "Esto funciona\n\nimport os\nimport pandas as pd\nos.getcwd()\n\ndata = pd.read_csv(\"to_map.csv\")\ndata.head()\n\n\n\n\n\n\n\n\nUnnamed: 0\nName\nplace\ncity\nlat\nlong\nlat2\nlong2\n\n\n\n\n0\n1\nIBEM – Intervención Breve basada en Entrevista...\nplace_2\nZacatecas, Mexico\n22.7709\n-102.5832\n23.356074\n-102.088448\n\n\n1\n2\nEmpresas Que se Cuidan\nplace_1\nZacatecas, Mexico\n22.7709\n-102.5832\n23.002941\n-101.903661\n\n\n2\n3\nTomando Buenas Decisiones\nplace_1\nZacatecas, Mexico\n22.7709\n-102.5832\n23.679452\n-102.437495\n\n\n3\n4\nAHORA (Aprendiendo a dar Oportunidades, Habili...\nplace_1\nZacatecas, Mexico\n22.7709\n-102.5832\n23.625417\n-102.322092\n\n\n4\n5\nIBEM – Intervención Breve basada en Entrevista...\nplace_3\nMexico\n23.6345\n-102.5528\n24.386202\n-101.609992\n\n\n\n\n\n\n\n#| standalone: true\n#| viewerHeight: 420\n\nfrom shiny import App, ui, render\nfrom shinywidgets import output_widget, render_widget\nfrom ipyleaflet import Map, CircleMarker, Popup\nfrom ipywidgets import HTML\nimport pandas as pd\nimport numpy as np\nimport io\nfrom pyodide.http import pyfetch\n\n# Fetch the CSV file using pyfetch\nasync def fetch_csv():\n    response = await pyfetch(\"to_map.csv\")\n    content = await response.bytes()\n    return pd.read_csv(io.BytesIO(content))\n\n# Define the UI\napp_ui = ui.page_fluid(\n    ui.output_text_verbatim(\"dataset\"),\n    output_widget(\"mymap\")\n)\n\ndef server(input, output, session):\n    @output\n    @render.text\n    async def dataset():\n        data = await fetch_csv()\n\n    @output\n    @render_widget\n    async def mymap():\n        data = await fetch_csv()\n        data = data.replace([np.inf, -np.inf], np.nan).dropna(subset=['lat', 'long'])\n\n        # Create a map centered at the specified location\n        m = Map(center=(3.3601, -71.0589), zoom=3)\n\n        for i in range(len(data)):\n            marker = CircleMarker(\n                location=(data.loc[i, 'lat'], data.loc[i, 'long']),\n                radius=5,\n                color=\"orange\",\n                fill=True,\n                fill_opacity=0.6\n            )\n            m.add_layer(marker)\n\n        return m\n\n# Create the app\napp = App(app_ui, server)\n\nif __name__ == \"__main__\":\n    app.run()"
+  },
+  {
+    "objectID": "past/LA_programs/text/text_tab1.html",
+    "href": "past/LA_programs/text/text_tab1.html",
+    "title": "Scoping Review of Youth ATOD Prevention Intervention in Latin America and the Caribbean",
+    "section": "",
+    "text": "Demostration for SPR 2022. For more information please contact:\nperla@miami.edu"
+  },
+  {
+    "objectID": "past/LA_programs/text/text_tab1.html#objective",
+    "href": "past/LA_programs/text/text_tab1.html#objective",
+    "title": "Scoping Review of Youth ATOD Prevention Intervention in Latin America and the Caribbean",
+    "section": "",
+    "text": "Demostration for SPR 2022. For more information please contact:\nperla@miami.edu"
+  },
+  {
+    "objectID": "past/test/Test.html",
+    "href": "past/test/Test.html",
+    "title": "",
+    "section": "",
+    "text": "library(shiny) \nlibrary(leaflet)\nlibrary(bslib)\n\n\nAttaching package: 'bslib'\n\n\nThe following object is masked from 'package:utils':\n\n    page\n\ndata &lt;- read.csv(\"to_map.csv\")\n\n#| standalone: true\n#| viewerHeight: 600\n\nlibrary(shiny)\nlibrary(bslib)\n\n# Define UI for app that draws a histogram ----\nui &lt;- page_sidebar(\n\n  # App title ----\n  title = \"Hello Shiny!\",\n\n  # Sidebar panel for inputs ----\n  sidebar = sidebar(\n\n    # Input: Slider for the number of bins ----\n    sliderInput(\n      inputId = \"bins\",\n      label = \"Number of bins:\",\n      min = 1,\n      max = 50,\n      value = 30\n    )\n  ),\n\n  # Output: Histogram ----\n  leafletOutput(\"mymap\")\n)\n\n# Define server logic required to draw a histogram ----\nserver &lt;- function(input, output) {\n    \n    output$mymap &lt;- renderLeaflet({\n        leaflet()  |&gt; \n        addTiles()  |&gt; \n        setView(lng = -71.0589, lat = 3.3601, zoom = 3) |&gt; \n        addCircleMarkers(data = data, lng = ~long, lat = ~lat, \n        radius = 5, color = \"orange\",\n        popup = paste(data$Name),\n       clusterOptions = markerClusterOptions())\n        \n  \n  })\n}\n\n# Create Shiny app ----\nshinyApp(ui = ui, server = server)"
+  }
+]
